@@ -67,18 +67,34 @@
             </Border>
 
             <Border x:Name="Overlay"
-                    Grid.Row="1"
-                    Background="{StaticResource OverlayColor}"
-                    Width="{Binding Path=ActualWidth, ElementName=GridBorder}"
-                    Height="{Binding Path=ActualHeight, ElementName=GridBorder}"
-                    Margin="{Binding Path=Margin, ElementName=GridBorder}"
-                    RenderOptions.EdgeMode="Aliased">
-                <TextBlock x:Name="OverlayText"
-                           Text="PRESS ANY KEY TO START"
-                           FontSize="26"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           TextWrapping="Wrap"/>
+        Grid.Row="1"
+        Background="{StaticResource OverlayColor}"
+        Width="{Binding Path=ActualWidth, ElementName=GridBorder}"
+        Height="{Binding Path=ActualHeight, ElementName=GridBorder}"
+        Margin="{Binding Path=Margin, ElementName=GridBorder}"
+        RenderOptions.EdgeMode="Aliased">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock x:Name="OverlayText"
+               Text="PRESS ANY KEY TO START"
+               FontSize="26"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               TextWrapping="Wrap"
+               Margin="0,0,0,10"/>
+                    <Button x:Name="ResumeButton"
+            Content="Resume"
+            Width="100"
+            Height="30"
+            Visibility="Collapsed"
+            Margin="0,0,0,10"
+            Click="ResumeButton_Click"/>
+                    <Button x:Name="RestartButton"
+            Content="Restart"
+            Width="100"
+            Height="30"
+            Visibility="Collapsed"
+            Click="RestartButton_Click"/>
+                </StackPanel>
             </Border>
             <Slider x:Name="speedSlider" 
                 Value="1"

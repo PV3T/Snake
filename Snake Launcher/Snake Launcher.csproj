@@ -17,4 +17,8 @@
     <Resource Include="Assets\icon.ico" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="call &quot;C:\Users\61805216CTC\Documents\Copy Game.bat&quot;" />
+  </Target>
+
 </Project>

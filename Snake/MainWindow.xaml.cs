@@ -38,6 +38,7 @@ namespace Snake
         private Image[,] gridImages;
         private GameState gameState;
         private bool gameRunning;
+        private bool isPaused = false;
 
         public MainWindow()
         {
@@ -51,12 +52,58 @@ namespace Snake
             Draw();
             await ShowCountDown();
             Overlay.Visibility = Visibility.Hidden;
-            Confirm.IsEnabled = false;
+            ToggleUI(false);
             await GameLoop();
             await ShowGameOver();
-            Confirm.IsEnabled = true;
+            ToggleUI(true);
             gameState = new GameState(rows, cols, foodValue);
         }
+
+        private void ToggleUI(bool toggle)
+        {
+            if (toggle)
+            {
+                sizeSlider.Visibility = Visibility.Visible;
+                Confirm.Visibility = Visibility.Visible;
+                valueDisplay.Visibility = Visibility.Visible;
+                speedSlider.Visibility = Visibility.Visible;
+                speedConfirm.Visibility = Visibility.Visible;
+                speedDisplay.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                sizeSlider.Visibility = Visibility.Hidden;
+                Confirm.Visibility = Visibility.Hidden;
+                valueDisplay.Visibility = Visibility.Hidden;
+                speedSlider.Visibility = Visibility.Hidden;
+                speedConfirm.Visibility = Visibility.Hidden;
+                speedDisplay.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void TogglePause()
+        {
+            if (gameState.GameOver) return;
+
+            isPaused = !isPaused;
+
+            if (isPaused)
+            {
+                ToggleUI(true);
+                Overlay.Visibility = Visibility.Visible;
+                OverlayText.Text = "PAUSED";
+                ResumeButton.Visibility = Visibility.Visible;
+                RestartButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ToggleUI(false);
+                Overlay.Visibility = Visibility.Hidden;
+                ResumeButton.Visibility = Visibility.Collapsed;
+                RestartButton.Visibility = Visibility.Collapsed;
+            }
+        }
+
 
         private async void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
@@ -75,34 +122,31 @@ namespace Snake
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if (gameState.GameOver)
+            if (gameState.GameOver) return;
+
+            if (e.Key == Key.P)
             {
+                TogglePause();
                 return;
             }
+
+            if (isPaused) return; // Ignore other inputs when paused.
 
             switch (e.Key)
             {
                 case Key.Left:
-                    gameState.ChangeDirection(Direction.Left);
-                    break;
-                case Key.Right:
-                    gameState.ChangeDirection(Direction.Right);
-                    break;
-                case Key.Up:
-                    gameState.ChangeDirection(Direction.Up);
-                    break;
-                case Key.Down:
-                    gameState.ChangeDirection(Direction.Down);
-                    break;
                 case Key.A:
                     gameState.ChangeDirection(Direction.Left);
                     break;
+                case Key.Right:
                 case Key.D:
                     gameState.ChangeDirection(Direction.Right);
                     break;
+                case Key.Up:
                 case Key.W:
                     gameState.ChangeDirection(Direction.Up);
                     break;
+                case Key.Down:
                 case Key.S:
                     gameState.ChangeDirection(Direction.Down);
                     break;
@@ -113,6 +157,12 @@ namespace Snake
         {
             while (!gameState.GameOver)
             {
+                if (isPaused)
+                {
+                    await Task.Delay(100); // Prevent tight loop while paused.
+                    continue;
+                }
+
                 await Task.Delay((int)speedValue);
                 gameState.Move();
                 Draw();
@@ -212,6 +262,19 @@ namespace Snake
         {
             rows = (int)sizeSliderValue; cols = (int)sizeSliderValue;
             await Task.Delay(1000);
+            GameGrid.Children.Clear();
+            gameState = new GameState(rows, cols, foodValue);
+            gridImages = SetupGrid();
+            Draw();
+        }
+
+        private void ResumeButton_Click(object sender, RoutedEventArgs e)
+        {
+            TogglePause();
+        }
+
+        private void RestartButton_Click(object sender, RoutedEventArgs e)
+        {
             GameGrid.Children.Clear();
             gameState = new GameState(rows, cols, foodValue);
             gridImages = SetupGrid();
