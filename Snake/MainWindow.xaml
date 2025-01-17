@@ -29,6 +29,9 @@
                Margin="10"/>
             <Slider x:Name="sizeSlider" 
                 Minimum="4" Maximum="100" 
+                TickFrequency="1"
+                IsSnapToTickEnabled="True"
+                IsDirectionReversed="False"
                 ValueChanged="Slider_ValueChanged"
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Top" 
@@ -77,6 +80,29 @@
                            VerticalAlignment="Center"
                            TextWrapping="Wrap"/>
             </Border>
+            <Slider x:Name="speedSlider" 
+                Value="1"
+                Minimum="0.5" Maximum="8" 
+                TickFrequency="0.5"
+                IsSnapToTickEnabled="True"
+                IsDirectionReversed="False"
+                Ticks="0.5,1,2,4,8"
+                ValueChanged="speedSlider_ValueChanged"
+                HorizontalAlignment="Left" 
+                VerticalAlignment="Top" 
+                Width="150" Margin="276,26,0,0" />
+            <Button x:Name="speedConfirm"
+                Content="Confirm"
+                HorizontalAlignment="Left"
+                FontSize="10"
+                VerticalAlignment="Top"
+                Margin="374,12,0,0"
+                Click="speedConfirm_Click" Height="14" />
+            <TextBlock x:Name="speedDisplay"
+                Text="Speed: 0"
+                HorizontalAlignment="Left" 
+                VerticalAlignment="Top"
+                Margin="276,12,0,0" />
         </Grid>
     </Viewbox>
 </Window>

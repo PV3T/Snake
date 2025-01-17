@@ -32,6 +32,13 @@ namespace Snake
             {
                 AddFood();
             }
+            else if (int.Parse(foodValue) > 100000)
+            {
+                for (int i = 0; i < 100000; i++)
+                {
+                    AddFood();
+                }
+            }
             else
             {
                 for (int i = 0; i < int.Parse(foodValue); i++)

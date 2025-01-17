@@ -31,7 +31,9 @@ namespace Snake
             { Direction.Left, 270 }
         };
         private static string foodValue = Environment.GetEnvironmentVariable("CustomVar1");
-        private double sliderValue;
+        private double sizeSliderValue;
+        private double speedValueHolder;
+        private int speedValue = 100;
         private int rows = 15, cols = 15;
         private Image[,] gridImages;
         private GameState gameState;
@@ -111,7 +113,7 @@ namespace Snake
         {
             while (!gameState.GameOver)
             {
-                await Task.Delay(100);
+                await Task.Delay((int)speedValue);
                 gameState.Move();
                 Draw();
             }
@@ -181,7 +183,12 @@ namespace Snake
                 Position pos = positions[i];
                 ImageSource source = (i == 0) ? Images.DeadHead : Images.DeadBody;
                 gridImages[pos.Row, pos.Col].Source = source;
-                await Task.Delay(50);
+                if (positions.Count < 20)
+                    await Task.Delay(50);
+                else if (positions.Count > 20 && positions.Count < 40)
+                    await Task.Delay(25);
+                else if (positions.Count > 40)
+                    await Task.Delay(5);
             }
         }
 
@@ -197,18 +204,49 @@ namespace Snake
         private async void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             await Task.Delay(100);
-            sliderValue = (int)e.NewValue;
-            valueDisplay.Text = $"Size: {sliderValue.ToString()}";
+            sizeSliderValue = (int)e.NewValue;
+            valueDisplay.Text = $"Size: {sizeSliderValue.ToString()}";
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            rows = (int)sliderValue; cols = (int)sliderValue;
+            rows = (int)sizeSliderValue; cols = (int)sizeSliderValue;
             await Task.Delay(1000);
             GameGrid.Children.Clear();
             gameState = new GameState(rows, cols, foodValue);
             gridImages = SetupGrid();
             Draw();
+        }
+
+        private async void speedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            await Task.Delay(100);
+            if (e.NewValue == 0.5)
+            {
+                speedValueHolder = 200;
+            }
+            else if (e.NewValue == 1)
+            {
+                speedValueHolder = 100;
+            }
+            else if (e.NewValue == 2)
+            {
+                speedValueHolder = 50;
+            }
+            else if (e.NewValue == 4)
+            {
+                speedValueHolder = 25;
+            }
+            else if (e.NewValue == 8)
+            {
+                speedValueHolder = 12;
+            }
+            speedDisplay.Text = $"Speed: {e.NewValue.ToString()}x";
+        }
+
+        private void speedConfirm_Click(object sender, RoutedEventArgs e)
+        {
+            speedValue = (int)speedValueHolder;
         }
 
         private async Task ShowGameOver()

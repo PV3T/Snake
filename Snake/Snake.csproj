@@ -6,6 +6,9 @@
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <BaseOutputPath></BaseOutputPath>
+    <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+    <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,7 +30,11 @@
     <Resource Include="Assets\Empty.png" />
     <Resource Include="Assets\Food.png" />
     <Resource Include="Assets\Head.png" />
-    <Resource Include="Assets\icon.ico" />
+    <Resource Include="Assets\icon.ico"/>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="call &quot;C:\Users\61805216CTC\source\repos\Snake\Copy Game.bat&quot;" />
+  </Target>
 
 </Project>
