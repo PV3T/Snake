@@ -81,6 +81,8 @@
                VerticalAlignment="Center"
                TextWrapping="Wrap"
                Margin="0,0,0,10"/>
+                    <TextBlock x:Name="MovementText"
+                        Text="Movement Type: " Height="18" Width="101" Margin="-220,0,0,-30"/>
                     <Button x:Name="ResumeButton"
             Content="Resume"
             Width="100"
@@ -88,6 +90,19 @@
             Visibility="Collapsed"
             Margin="0,0,0,10"
             Click="ResumeButton_Click"/>
+                    <Button x:Name="MovementType"
+            Content="WASD"
+            Width="100"
+            Height="30"
+            Visibility="Visible"
+            Click="MovementType_Click"/>
+                    <Button x:Name="OptionsButton"
+            Content="Options"
+            Width="100"
+            Height="30"
+            Visibility="Collapsed"
+            Margin="0,0,0,10"
+            Click="Options_Click"/>
                     <Button x:Name="RestartButton"
             Content="Restart"
             Width="100"

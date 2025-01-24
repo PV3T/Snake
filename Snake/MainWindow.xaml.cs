@@ -31,6 +31,7 @@ namespace Snake
             { Direction.Left, 270 }
         };
         private static string foodValue = Environment.GetEnvironmentVariable("CustomVar1");
+        private string moveType = "WASD";
         private double sizeSliderValue;
         private double speedValueHolder;
         private int speedValue = 100;
@@ -97,6 +98,7 @@ namespace Snake
                 Overlay.Visibility = Visibility.Visible;
                 OverlayText.Text = "PAUSED";
                 ResumeButton.Visibility = Visibility.Visible;
+                OptionsButton.Visibility = Visibility.Visible;
                 RestartButton.Visibility = Visibility.Visible;
             }
             else
@@ -104,6 +106,7 @@ namespace Snake
                 ToggleUI(false);
                 Overlay.Visibility = Visibility.Hidden;
                 ResumeButton.Visibility = Visibility.Collapsed;
+                OptionsButton.Visibility = Visibility.Collapsed;
                 RestartButton.Visibility = Visibility.Collapsed;
             }
         }
@@ -136,25 +139,43 @@ namespace Snake
 
             if (isPaused) return; // Ignore other inputs when paused.
 
-            switch (e.Key)
+            if (moveType == "WASD")
             {
-                case Key.Left:
-                case Key.A:
-                    gameState.ChangeDirection(Direction.Left);
-                    break;
-                case Key.Right:
-                case Key.D:
-                    gameState.ChangeDirection(Direction.Right);
-                    break;
-                case Key.Up:
-                case Key.W:
-                    gameState.ChangeDirection(Direction.Up);
-                    break;
-                case Key.Down:
-                case Key.S:
-                    gameState.ChangeDirection(Direction.Down);
-                    break;
+                switch (e.Key)
+                {
+                    case Key.A:
+                        gameState.ChangeDirection(Direction.Left);
+                        break;
+                    case Key.D:
+                        gameState.ChangeDirection(Direction.Right);
+                        break;
+                    case Key.W:
+                        gameState.ChangeDirection(Direction.Up);
+                        break;
+                    case Key.S:
+                        gameState.ChangeDirection(Direction.Down);
+                        break;
+                }
             }
+            else if (moveType == "Arrows")
+            {
+                switch (e.Key)
+                {
+                    case Key.Left:
+                        gameState.ChangeDirection(Direction.Left);
+                        break;
+                    case Key.Right:
+                        gameState.ChangeDirection(Direction.Right);
+                        break;
+                    case Key.Up:
+                        gameState.ChangeDirection(Direction.Up);
+                        break;
+                    case Key.Down:
+                        gameState.ChangeDirection(Direction.Down);
+                        break;
+                }
+            }
+            
         }
 
         private async Task GameLoop()
@@ -277,6 +298,17 @@ namespace Snake
             TogglePause();
         }
 
+        private void Options_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleUI(false);
+            OverlayText.Text = "Options";
+            ResumeButton.Visibility = Visibility.Collapsed;
+            OptionsButton.Visibility = Visibility.Collapsed;
+            RestartButton.Visibility = Visibility.Collapsed;
+            MovementType.Visibility = Visibility.Visible;
+            MovementText.Visibility = Visibility.Visible;
+        }
+
         private void RestartButton_Click(object sender, RoutedEventArgs e)
         {
             GameGrid.Children.Clear();
@@ -314,6 +346,20 @@ namespace Snake
         private void speedConfirm_Click(object sender, RoutedEventArgs e)
         {
             speedValue = (int)speedValueHolder;
+        }
+
+        private void MovementType_Click(object sender, RoutedEventArgs e)
+        {
+            if (moveType == "WASD")
+            {
+                moveType = "Arrows";
+                MovementType.Content = "Arrows";
+            }
+            else if (moveType == "Arrows")
+            {
+                moveType = "WASD";
+                MovementType.Content = "WASD";
+            }
         }
 
         private async Task ShowGameOver()
