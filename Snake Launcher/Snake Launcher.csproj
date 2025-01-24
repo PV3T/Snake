@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="call &quot;C:\Users\61805216CTC\Documents\Copy Game.bat&quot;" />
+    <Exec Command="call &quot;C:\Users\terry\source\repos\Snake\Postbuild.bat&quot;" />
   </Target>
 
 </Project>

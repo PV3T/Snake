@@ -34,7 +34,7 @@ namespace Snake_Launcher
             string launcherDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
             // Define the path to the main WPF application\Snake\bin\Debug\net8.0-windows
-            string mainAppPath = System.IO.Path.Combine(launcherDirectory, "..", "..", "..", "..", "Snake", "bin", "Debug", "net8.0-windows", "Snake.exe");
+            string mainAppPath = System.IO.Path.Combine(launcherDirectory, "Game", "Snake.exe");
             mainAppPath = System.IO.Path.GetFullPath(mainAppPath);
 
             // Launch the main WPF application
