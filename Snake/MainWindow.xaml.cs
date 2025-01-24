@@ -37,14 +37,16 @@ namespace Snake
         private int rows = 15, cols = 15;
         private Image[,] gridImages;
         private GameState gameState;
+        private AudioPlayer _audioPlayer;
         private bool gameRunning;
         private bool isPaused = false;
-
+        
         public MainWindow()
         {
             InitializeComponent();
             gridImages = SetupGrid();
             gameState = new GameState(rows, cols, foodValue);
+            _audioPlayer = new AudioPlayer();
         }
 
         private async Task RunGame()
@@ -53,7 +55,9 @@ namespace Snake
             await ShowCountDown();
             Overlay.Visibility = Visibility.Hidden;
             ToggleUI(false);
+            _audioPlayer.PlayAudio("Mine.mp3");
             await GameLoop();
+            _audioPlayer.StopAudio();
             await ShowGameOver();
             ToggleUI(true);
             gameState = new GameState(rows, cols, foodValue);
