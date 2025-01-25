@@ -73,16 +73,28 @@
         Height="{Binding Path=ActualHeight, ElementName=GridBorder}"
         Margin="{Binding Path=Margin, ElementName=GridBorder}"
         RenderOptions.EdgeMode="Aliased">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel x:Name="stackPanel" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock x:Name="OverlayText"
                Text="PRESS ANY KEY TO START"
                FontSize="26"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
                TextWrapping="Wrap"
-               Margin="0,0,0,10"/>
+               Margin="0,0,0,0"/>
+                    <Button x:Name="BackButton"
+                HorizontalAlignment="Left"
+                Content="Back"
+                Width="57"
+                Height="22"
+                Visibility="Collapsed"
+                Click="BackButton_Click" Margin="0,0,0,200"/>
                     <TextBlock x:Name="MovementText"
-                        Text="Movement Type: " Height="18" Width="101" Margin="-220,0,0,-30"/>
+                        Text="Movement Type: " 
+                        Height="18" 
+                        Width="101" 
+                        Margin="0,-100,0,70" 
+                        HorizontalAlignment="Left"
+                        Visibility="Collapsed"/>
                     <Button x:Name="ResumeButton"
             Content="Resume"
             Width="100"
@@ -94,8 +106,8 @@
             Content="WASD"
             Width="100"
             Height="30"
-            Visibility="Visible"
-            Click="MovementType_Click"/>
+            Visibility="Collapsed"
+            Click="MovementType_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-100,0,100"/>
                     <Button x:Name="OptionsButton"
             Content="Options"
             Width="100"

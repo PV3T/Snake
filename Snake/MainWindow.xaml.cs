@@ -58,10 +58,10 @@ namespace Snake
             ToggleUI(false);
             _audioPlayer.PlayAudio("Mine.mp3");
             await GameLoop();
-            _audioPlayer.StopAudio();
             await ShowGameOver();
             ToggleUI(true);
             gameState = new GameState(rows, cols, foodValue);
+            _audioPlayer.StopAudio();
         }
 
         private void ToggleUI(bool toggle)
@@ -94,6 +94,7 @@ namespace Snake
 
             if (isPaused)
             {
+                _audioPlayer.Pause();
                 ToggleUI(true);
                 Overlay.Visibility = Visibility.Visible;
                 OverlayText.Text = "PAUSED";
@@ -103,6 +104,7 @@ namespace Snake
             }
             else
             {
+                _audioPlayer.Resume();
                 ToggleUI(false);
                 Overlay.Visibility = Visibility.Hidden;
                 ResumeButton.Visibility = Visibility.Collapsed;
@@ -360,6 +362,11 @@ namespace Snake
                 moveType = "WASD";
                 MovementType.Content = "WASD";
             }
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private async Task ShowGameOver()

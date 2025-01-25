@@ -57,5 +57,15 @@ namespace Snake
                 File.Delete(tempFilePath);
             }
         }
+
+        public void Pause()
+        {
+            _mediaPlayer.Pause();
+        }
+
+        public void Resume()
+        {
+            _mediaPlayer.Play();
+        }
     }
 }
