@@ -95,7 +95,7 @@ namespace Snake
         private async void LoadLeaderboard()
         {
             List<LeaderboardEntry> scores = await FirebaseLeaderboard.GetLeaderboardAsync();
-            scores.Sort((a, b) => b.Score.CompareTo(a.Score)); // Sort by score, highest first
+            scores.Sort((a, b) => b.Score.CompareTo(a.Score));
             LeaderboardList.ItemsSource = scores;
         }
 
