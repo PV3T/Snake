@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -7,7 +8,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+using static System.Formats.Asn1.AsnWriter;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Snake
 {
@@ -31,7 +36,9 @@ namespace Snake
             { Direction.Left, 270 }
         };
         private static string foodValue = Environment.GetEnvironmentVariable("CustomVar1");
+        private string name;
         private string moveType = "WASD";
+        private static string userId;
         private double sizeSliderValue;
         private double speedValueHolder;
         private int speedValue = 100;
@@ -41,13 +48,55 @@ namespace Snake
         private AudioPlayer _audioPlayer;
         private bool gameRunning;
         private bool isPaused = false;
+        private bool nameEntered = false;
         
         public MainWindow()
         {
             InitializeComponent();
+            UniqueID();
+            LoadLeaderboard();
             gridImages = SetupGrid();
             gameState = new GameState(rows, cols, foodValue);
             _audioPlayer = new AudioPlayer();
+        }
+
+        static void UniqueID()
+        {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string folderPath = Path.Combine(appDataPath, "SnakeGame");
+            string filePath = Path.Combine(folderPath, "user_id.txt");
+
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            if (File.Exists(filePath))
+            {
+                userId = File.ReadAllText(filePath);
+            }
+            else
+            {
+                userId = GenerateUniqueId(9);
+                File.WriteAllText(filePath, userId);
+            }
+
+            Console.WriteLine($"User ID: {userId}");
+        }
+
+        static string GenerateUniqueId(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            Random random = new Random();
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        private async void LoadLeaderboard()
+        {
+            List<LeaderboardEntry> scores = await FirebaseLeaderboard.GetLeaderboardAsync();
+            scores.Sort((a, b) => b.Score.CompareTo(a.Score)); // Sort by score, highest first
+            LeaderboardList.ItemsSource = scores;
         }
 
         private async Task RunGame()
@@ -62,6 +111,11 @@ namespace Snake
             ToggleUI(true);
             gameState = new GameState(rows, cols, foodValue);
             _audioPlayer.StopAudio();
+        }
+
+        private void GetName()
+        {
+            name = User.Text;
         }
 
         private void ToggleUI(bool toggle)
@@ -113,21 +167,21 @@ namespace Snake
             }
         }
 
-
         private async void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (Overlay.Visibility == Visibility.Visible)
+            if (Overlay.Visibility == Visibility.Visible && nameEntered)
             {
                 e.Handled = true;
             }
 
-            if (!gameRunning)
+            if (!gameRunning && nameEntered)
             {
                 gameRunning = true;
                 await RunGame();
                 gameRunning = false;
             }
         }
+
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
@@ -300,15 +354,35 @@ namespace Snake
             TogglePause();
         }
 
+        private void ToggleOptions(bool toggle)
+        {
+            if (toggle)
+            {
+                ToggleUI(false);
+                OverlayText.Text = "Options";
+                ResumeButton.Visibility = Visibility.Collapsed;
+                OptionsButton.Visibility = Visibility.Collapsed;
+                RestartButton.Visibility = Visibility.Collapsed;
+                MovementType.Visibility = Visibility.Visible;
+                MovementText.Visibility = Visibility.Visible;
+                BackButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ToggleUI(true);
+                OverlayText.Text = "Options";
+                ResumeButton.Visibility = Visibility.Visible;
+                OptionsButton.Visibility = Visibility.Visible;
+                RestartButton.Visibility = Visibility.Visible;
+                MovementType.Visibility = Visibility.Collapsed;
+                MovementText.Visibility = Visibility.Collapsed;
+                BackButton.Visibility = Visibility.Collapsed;
+            }
+        }
+
         private void Options_Click(object sender, RoutedEventArgs e)
         {
-            ToggleUI(false);
-            OverlayText.Text = "Options";
-            ResumeButton.Visibility = Visibility.Collapsed;
-            OptionsButton.Visibility = Visibility.Collapsed;
-            RestartButton.Visibility = Visibility.Collapsed;
-            MovementType.Visibility = Visibility.Visible;
-            MovementText.Visibility = Visibility.Visible;
+            ToggleOptions(true);
         }
 
         private void RestartButton_Click(object sender, RoutedEventArgs e)
@@ -366,11 +440,25 @@ namespace Snake
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
+            ToggleOptions(false);
+        }
 
+        private void User_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                GetName();
+                e.Handled = true;
+                nameEntered = true;
+                User.Visibility = Visibility.Collapsed;
+            }
         }
 
         private async Task ShowGameOver()
         {
+            LeaderboardEntry newEntry = new LeaderboardEntry(userId, name, gameState.Score);
+            await FirebaseLeaderboard.AddOrUpdateScoreAsync(newEntry);
+            LoadLeaderboard();
             await DrawDeadSnake();
             await Task.Delay(1000);
             Overlay.Visibility = Visibility.Visible;

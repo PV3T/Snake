@@ -7,10 +7,10 @@ taskkill /F /IM "Snake.exe" 2>nul
 echo Processes closed.
 
 :: Define source and destination directories
-set "SOURCE1=C:\Users\terry\source\repos\Snake\Snake\bin\Debug\net8.0-windows"
-set "SOURCE2=C:\Users\terry\source\repos\Snake\Snake Launcher\bin\Debug\net8.0-windows"
-set "DESTINATION1=C:\Users\terry\Documents\Snake Launcher\Game"
-set "DESTINATION2=C:\Users\terry\Documents\Snake Launcher"
+set "SOURCE1=C:\Users\61805216CTC\source\repos\Snake\Snake\bin\Debug\net8.0-windows"
+set "SOURCE2=C:\Users\61805216CTC\source\repos\Snake\Snake Launcher\bin\Debug\net8.0-windows"
+set "DESTINATION1=C:\Users\61805216CTC\Documents\Snake Launcher\Game"
+set "DESTINATION2=C:\Users\61805216CTC\Documents\Snake Launcher"
 
 :: Ensure the destination directories exist
 if not exist "%DESTINATION1%" mkdir "%DESTINATION1%"

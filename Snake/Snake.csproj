@@ -35,8 +35,12 @@
     <EmbeddedResource Include="Audio\Mine.mp3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="call &quot;C:\Users\terry\source\repos\Snake\Postbuild.bat&quot;" />
+    <Exec Command="call &quot;C:\Users\61805216CTC\source\repos\Snake\Postbuild.bat&quot;" />
   </Target>
 
 </Project>

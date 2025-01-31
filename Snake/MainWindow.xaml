@@ -48,6 +48,20 @@
                    HorizontalAlignment="Left" 
                    VerticalAlignment="Top"
                    Margin="20,12,0,0" />
+            <TextBlock x:Name="LeaderboardLabel"
+                       Text="Leaderboard" 
+                       FontSize="22" Margin="-167,3,457,11"/>
+            <ListBox Name="LeaderboardList" Margin="-167,35,457,1" Grid.RowSpan="2">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Username}" Width="100"/>
+                            <TextBlock Text="{Binding Score}" Width="50"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
 
             <Border x:Name="GridBorder"
             Grid.Row="1"
@@ -81,19 +95,24 @@
                VerticalAlignment="Center"
                TextWrapping="Wrap"
                Margin="0,0,0,0"/>
+                    <TextBox x:Name="User"
+                             Height="25"
+                             Width="170"
+                             Visibility="Visible"
+                             KeyDown="User_KeyDown"/>
                     <Button x:Name="BackButton"
-                HorizontalAlignment="Left"
+                            Margin="0,0,250,100"
                 Content="Back"
                 Width="57"
                 Height="22"
                 Visibility="Collapsed"
-                Click="BackButton_Click" Margin="0,0,0,200"/>
+                Click="BackButton_Click"/>
                     <TextBlock x:Name="MovementText"
-                        Text="Movement Type: " 
+                        Text="Movement Type" 
                         Height="18" 
                         Width="101" 
-                        Margin="0,-100,0,70" 
-                        HorizontalAlignment="Left"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
                         Visibility="Collapsed"/>
                     <Button x:Name="ResumeButton"
             Content="Resume"
@@ -107,7 +126,7 @@
             Width="100"
             Height="30"
             Visibility="Collapsed"
-            Click="MovementType_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-100,0,100"/>
+            Click="MovementType_Click" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <Button x:Name="OptionsButton"
             Content="Options"
             Width="100"
