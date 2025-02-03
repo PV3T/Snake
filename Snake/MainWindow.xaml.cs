@@ -35,7 +35,7 @@ namespace Snake
             { Direction.Down, 180 },
             { Direction.Left, 270 }
         };
-        private static string foodValue = Environment.GetEnvironmentVariable("CustomVar1");
+        private static string foodValue;
         private string name;
         private string moveType = "WASD";
         private static string userId;
@@ -104,11 +104,9 @@ namespace Snake
             Draw();
             await ShowCountDown();
             Overlay.Visibility = Visibility.Hidden;
-            ToggleUI(false);
             _audioPlayer.PlayAudio("Mine.mp3");
             await GameLoop();
             await ShowGameOver();
-            ToggleUI(true);
             gameState = new GameState(rows, cols, foodValue);
             _audioPlayer.StopAudio();
         }
@@ -122,6 +120,8 @@ namespace Snake
         {
             if (toggle)
             {
+                foodAmount.Visibility = Visibility.Visible;
+                foodDisplay.Visibility = Visibility.Visible;
                 sizeSlider.Visibility = Visibility.Visible;
                 Confirm.Visibility = Visibility.Visible;
                 valueDisplay.Visibility = Visibility.Visible;
@@ -131,6 +131,8 @@ namespace Snake
             }
             else
             {
+                foodAmount.Visibility = Visibility.Hidden;
+                foodDisplay.Visibility = Visibility.Hidden;
                 sizeSlider.Visibility = Visibility.Hidden;
                 Confirm.Visibility = Visibility.Hidden;
                 valueDisplay.Visibility = Visibility.Hidden;
@@ -145,11 +147,11 @@ namespace Snake
             if (gameState.GameOver) return;
 
             isPaused = !isPaused;
+            gameState.AllowMovement(isPaused);
 
             if (isPaused)
             {
                 _audioPlayer.Pause();
-                ToggleUI(true);
                 Overlay.Visibility = Visibility.Visible;
                 OverlayText.Text = "PAUSED";
                 ResumeButton.Visibility = Visibility.Visible;
@@ -159,7 +161,6 @@ namespace Snake
             else
             {
                 _audioPlayer.Resume();
-                ToggleUI(false);
                 Overlay.Visibility = Visibility.Hidden;
                 ResumeButton.Visibility = Visibility.Collapsed;
                 OptionsButton.Visibility = Visibility.Collapsed;
@@ -169,6 +170,19 @@ namespace Snake
 
         private async void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            if (foodAmount.IsFocused)
+            {
+                e.Handled = false; // Let the TextBox handle the input normally
+                return;
+            }
+
+            // Block other inputs when paused
+            if (isPaused)
+            {
+                e.Handled = true; // Block other key inputs
+                return;
+            }
+
             if (Overlay.Visibility == Visibility.Visible && nameEntered)
             {
                 e.Handled = true;
@@ -192,8 +206,6 @@ namespace Snake
                 TogglePause();
                 return;
             }
-
-            if (isPaused) return; // Ignore other inputs when paused.
 
             if (moveType == "WASD")
             {
@@ -358,7 +370,7 @@ namespace Snake
         {
             if (toggle)
             {
-                ToggleUI(false);
+                ToggleUI(true);
                 OverlayText.Text = "Options";
                 ResumeButton.Visibility = Visibility.Collapsed;
                 OptionsButton.Visibility = Visibility.Collapsed;
@@ -369,7 +381,7 @@ namespace Snake
             }
             else
             {
-                ToggleUI(true);
+                ToggleUI(false);
                 OverlayText.Text = "Options";
                 ResumeButton.Visibility = Visibility.Visible;
                 OptionsButton.Visibility = Visibility.Visible;
@@ -448,9 +460,54 @@ namespace Snake
             if (e.Key == Key.Enter)
             {
                 GetName();
+                gameState.dirChanges.Clear();
                 e.Handled = true;
                 nameEntered = true;
                 User.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void foodAmount_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                int.TryParse(foodAmount.Text, out int value);
+                if (value == 0)
+                    foodValue = "1";
+                else if (value > 10000)
+                    foodValue = "10000";
+                else
+                    foodValue = foodAmount.Text;
+                GameGrid.Children.Clear();
+                gameState = new GameState(rows, cols, foodValue);
+                gridImages = SetupGrid();
+                Draw();
+            }
+        }
+
+        private void foodAmount_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !IsTextNumeric(e.Text);
+        }
+
+        private bool IsTextNumeric(string text)
+        {
+            return int.TryParse(text, out _);
+        }
+
+        private void foodAmount_Pasting(object sender, DataObjectPastingEventArgs e)
+        {
+            if (e.DataObject.GetDataPresent(typeof(string)))
+            {
+                string text = (string)e.DataObject.GetData(typeof(string));
+                if (!IsTextNumeric(text))
+                {
+                    e.CancelCommand();
+                }
+            }
+            else
+            {
+                e.CancelCommand();
             }
         }
 

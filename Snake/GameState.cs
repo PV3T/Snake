@@ -14,8 +14,9 @@ namespace Snake
         public Direction Dir { get; private set; }
         public int Score {  get; private set; }
         public bool GameOver { get; private set; }
+        public bool AllowMovementState { get; private set; }
 
-        private readonly LinkedList<Direction> dirChanges = new LinkedList<Direction>();
+        public readonly LinkedList<Direction> dirChanges = new LinkedList<Direction>();
         private readonly LinkedList<Position> snakePositions = new LinkedList<Position>();
         private readonly Random random = new Random();
 
@@ -135,12 +136,17 @@ namespace Snake
             return newDir != lastDir && newDir != lastDir.Opposite();
         }
 
+        public void AllowMovement(bool getAllow)
+        {
+            AllowMovementState = getAllow;
+        }
+
         public void ChangeDirection(Direction dir)
         {
-            if (CanChangeDirection(dir))
-            {
+            if (AllowMovementState)
+                return;
+            else if (CanChangeDirection(dir))
                 dirChanges.AddLast(dir);
-            }
         }
 
         private bool OutsideGrid(Position pos)

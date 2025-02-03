@@ -21,12 +21,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock x:Name="ScoreText"
-               HorizontalAlignment="Center"
-               VerticalAlignment="Center"
-               Text="SCORE 0"
-               FontSize="22"
-               Margin="10"/>
+
             <Slider x:Name="sizeSlider" 
                 Minimum="4" Maximum="100" 
                 TickFrequency="1"
@@ -35,23 +30,26 @@
                 ValueChanged="Slider_ValueChanged"
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Top" 
+                Visibility="Hidden"
                 Width="150" Margin="20,26,0,0" />
             <Button x:Name="Confirm"
                 Content="Confirm"
                 HorizontalAlignment="Left"
                 FontSize="10"
                 VerticalAlignment="Top"
+                Visibility="Hidden"
                 Margin="119,12,0,0"
                 Click="Button_Click" Height="14" />
             <TextBlock x:Name="valueDisplay"
                    Text="Size: 0"
                    HorizontalAlignment="Left" 
                    VerticalAlignment="Top"
+                Visibility="Hidden"
                    Margin="20,12,0,0" />
             <TextBlock x:Name="LeaderboardLabel"
                        Text="Leaderboard" 
                        FontSize="22" Margin="-167,3,457,11"/>
-            <ListBox Name="LeaderboardList" Margin="-167,35,457,1" Grid.RowSpan="2">
+            <ListBox Name="LeaderboardList" Margin="-167,35,457,29" Grid.RowSpan="2">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -61,6 +59,15 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+            <TextBlock x:Name="ScoreText"
+   HorizontalAlignment="Left"
+   VerticalAlignment="Top"
+   Text="SCORE 0"
+   FontSize="22"
+   Margin="-137,396,0,0" Grid.Row="1"/>
+            <TextBlock x:Name="pauseInstruct"
+                       Text="Press P to Pause" Margin="488,0,-164,25"/>
+
 
 
             <Border x:Name="GridBorder"
@@ -89,7 +96,7 @@
         RenderOptions.EdgeMode="Aliased">
                 <StackPanel x:Name="stackPanel" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock x:Name="OverlayText"
-               Text="PRESS ANY KEY TO START"
+               Text="Username:"
                FontSize="26"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
@@ -152,19 +159,38 @@
                 ValueChanged="speedSlider_ValueChanged"
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Top" 
+                Visibility="Hidden"
                 Width="150" Margin="276,26,0,0" />
             <Button x:Name="speedConfirm"
                 Content="Confirm"
                 HorizontalAlignment="Left"
                 FontSize="10"
                 VerticalAlignment="Top"
+                Visibility="Hidden"
                 Margin="374,12,0,0"
                 Click="speedConfirm_Click" Height="14" />
             <TextBlock x:Name="speedDisplay"
                 Text="Speed: 0"
                 HorizontalAlignment="Left" 
                 VerticalAlignment="Top"
+                Visibility="Hidden"
                 Margin="276,12,0,0" />
+            <TextBlock x:Name="foodDisplay"
+    Text="Food: "
+    HorizontalAlignment="Left" 
+    VerticalAlignment="Top"
+    Visibility="Hidden"
+    Margin="170,3,0,0" />
+            <TextBox x:Name="foodAmount"
+                   HorizontalAlignment="Left" 
+                   Height="20"
+                   Width="106"
+                   VerticalAlignment="Top"
+                   Visibility="Hidden"
+                   Margin="170,20,0,0" 
+                   PreviewTextInput="foodAmount_PreviewTextInput"
+                   KeyDown="foodAmount_KeyDown"
+                   DataObject.Pasting="foodAmount_Pasting"/>
         </Grid>
     </Viewbox>
 </Window>
