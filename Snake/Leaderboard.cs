@@ -11,7 +11,6 @@ public class FirebaseLeaderboard
 
     public static async Task AddOrUpdateScoreAsync(LeaderboardEntry entry)
     {
-
         string userEntryUrl = $"https://snake-board-default-rtdb.firebaseio.com/leaderboard/{entry.UserId}.json";
 
         HttpResponseMessage getResponse = await client.GetAsync(userEntryUrl);

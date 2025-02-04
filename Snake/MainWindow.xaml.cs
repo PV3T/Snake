@@ -103,7 +103,7 @@ namespace Snake
 
         private async Task UploadScore()
         {
-            if (gameState != null && !gameState.GameOver)
+            if (gameState != null && !gameState.GameOver && nameEntered && gameState.Score > 0)
             {
                 int.TryParse(foodValue, out int food);
                 if (speedValue == 200 || food > 1)
@@ -180,6 +180,8 @@ namespace Snake
         private void TogglePause()
         {
             if (gameState.GameOver) return;
+
+            if (!nameEntered) return;
 
             isPaused = !isPaused;
             gameState.AllowMovement(isPaused);
@@ -504,6 +506,7 @@ namespace Snake
                 e.Handled = true;
                 nameEntered = true;
                 User.Visibility = Visibility.Collapsed;
+                OverlayText.Text = "PRESS ANY KEY TO START";
             }
         }
 
