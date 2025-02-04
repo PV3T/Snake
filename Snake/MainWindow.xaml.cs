@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace Snake
 {
@@ -54,10 +55,10 @@ namespace Snake
         {
             InitializeComponent();
             UniqueID();
-            LoadLeaderboard();
             gridImages = SetupGrid();
             gameState = new GameState(rows, cols, foodValue);
             _audioPlayer = new AudioPlayer();
+            StartLeaderboardRefresh();
         }
 
         static void UniqueID()
@@ -97,6 +98,14 @@ namespace Snake
             List<LeaderboardEntry> scores = await FirebaseLeaderboard.GetLeaderboardAsync();
             scores.Sort((a, b) => b.Score.CompareTo(a.Score));
             LeaderboardList.ItemsSource = scores;
+        }
+
+        private void StartLeaderboardRefresh()
+        {
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(0.1);
+            timer.Tick += (sender, e) => LoadLeaderboard();
+            timer.Start();
         }
 
         private async Task RunGame()
@@ -248,6 +257,7 @@ namespace Snake
 
         private async Task GameLoop()
         {
+
             while (!gameState.GameOver)
             {
                 if (isPaused)
@@ -434,6 +444,10 @@ namespace Snake
         private void speedConfirm_Click(object sender, RoutedEventArgs e)
         {
             speedValue = (int)speedValueHolder;
+            GameGrid.Children.Clear();
+            gameState = new GameState(rows, cols, foodValue);
+            gridImages = SetupGrid();
+            Draw();
         }
 
         private void MovementType_Click(object sender, RoutedEventArgs e)
@@ -513,8 +527,17 @@ namespace Snake
 
         private async Task ShowGameOver()
         {
-            LeaderboardEntry newEntry = new LeaderboardEntry(userId, name, gameState.Score);
-            await FirebaseLeaderboard.AddOrUpdateScoreAsync(newEntry);
+            int.TryParse(foodValue, out int food);
+            if (speedValue == 200 || food > 1)
+            {
+                goto checkdone;
+            }
+            else
+            {
+                LeaderboardEntry newEntry = new LeaderboardEntry(userId, name, gameState.Score);
+                await FirebaseLeaderboard.AddOrUpdateScoreAsync(newEntry);
+            }
+            checkdone:
             LoadLeaderboard();
             await DrawDeadSnake();
             await Task.Delay(1000);
