@@ -59,6 +59,7 @@ namespace Snake
             gameState = new GameState(rows, cols, foodValue);
             _audioPlayer = new AudioPlayer();
             StartLeaderboardRefresh();
+            StartScoreUpdate();
         }
 
         static void UniqueID()
@@ -100,12 +101,37 @@ namespace Snake
             LeaderboardList.ItemsSource = scores;
         }
 
+        private async Task UploadScore()
+        {
+            if (gameState != null && !gameState.GameOver)
+            {
+                int.TryParse(foodValue, out int food);
+                if (speedValue == 200 || food > 1)
+                {
+                    return;
+                }
+                else
+                {
+                    LeaderboardEntry newEntry = new LeaderboardEntry(userId, name, gameState.Score);
+                    await FirebaseLeaderboard.AddOrUpdateScoreAsync(newEntry);
+                }
+            }
+        }
+
         private void StartLeaderboardRefresh()
         {
             DispatcherTimer timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(0.1);
             timer.Tick += (sender, e) => LoadLeaderboard();
             timer.Start();
+        }
+
+        private void StartScoreUpdate()
+        {
+            DispatcherTimer scoreTimer = new DispatcherTimer();
+            scoreTimer.Interval = TimeSpan.FromSeconds(0.1); // Update score every second
+            scoreTimer.Tick += async (sender, e) => await UploadScore();
+            scoreTimer.Start();
         }
 
         private async Task RunGame()
@@ -527,18 +553,6 @@ namespace Snake
 
         private async Task ShowGameOver()
         {
-            int.TryParse(foodValue, out int food);
-            if (speedValue == 200 || food > 1)
-            {
-                goto checkdone;
-            }
-            else
-            {
-                LeaderboardEntry newEntry = new LeaderboardEntry(userId, name, gameState.Score);
-                await FirebaseLeaderboard.AddOrUpdateScoreAsync(newEntry);
-            }
-            checkdone:
-            LoadLeaderboard();
             await DrawDeadSnake();
             await Task.Delay(1000);
             Overlay.Visibility = Visibility.Visible;
